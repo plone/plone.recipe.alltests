@@ -4,5 +4,8 @@ Changelog
 1.0 (unreleased)
 ----------------
 
+- Allow the use of regular expressions in the exclude list.
+  [hannosch]
+
 - Initial implementation.
   [hannosch]

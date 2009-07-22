@@ -1,4 +1,5 @@
 import os
+import re
 
 from zc.buildout import easy_install
 from zc.recipe.egg import Egg
@@ -21,7 +22,7 @@ class Recipe(object):
         self.testscript = self.options.get('test-script')
 
         exclude = self.options.get('exclude', '')
-        self.exclude = set(exclude.split())
+        self.exclude = exclude.split()
 
         options['location'] = os.path.join(
             buildout['buildout']['parts-directory'],
@@ -43,8 +44,19 @@ class Recipe(object):
         for dist in ws.by_key.values():
             packages.append(dist.project_name)
 
-        packages = set(packages) - EXCLUDE_PACKAGES - self.exclude
-        packages = list(packages)
+        excludes = [re.compile(e) for e in self.exclude]
+        packages = list(set(packages) - EXCLUDE_PACKAGES)
+
+        filtered_packages = []
+        for p in packages:
+            match = False
+            for e in excludes:
+                if e.search(p) is not None:
+                    match = True
+            if not match:
+                filtered_packages.append(p)
+        packages = filtered_packages
+
         for k, v in pmap.items():
             if k in packages:
                 packages.remove(k)

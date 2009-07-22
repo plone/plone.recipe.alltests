@@ -25,7 +25,8 @@ test-script
   needs to be configured correctly to run all tests for all specified eggs.
 
 exclude
-  A list of eggs which should be excluded from the test runs.
+  A list of eggs which should be excluded from the test runs. The values are
+  interpreted as Python regular expressions.
 
 package-map
   An buildout section containing a mapping of distribution names to package
