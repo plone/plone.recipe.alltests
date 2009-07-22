@@ -4,6 +4,10 @@ Changelog
 1.0 (unreleased)
 ----------------
 
+- Added support for grouping multiple packages into one test group, avoiding
+  some of the shared test setup cost.
+  [hannosch]
+
 - Added total test time to the output.
   [hannosch]
 

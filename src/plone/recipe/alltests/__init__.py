@@ -69,6 +69,14 @@ class Recipe(object):
                 del paths[k]
         packages.sort()
 
+        # Allow to group multiple packages into one test run
+        groups = dict()
+        groups_section = options.get('groups', '').strip()
+        if groups_section:
+            data = self.buildout[groups_section]
+            for k, v in data.items():
+                groups[k] = v.split()
+
         easy_install.scripts(
             [(self.name, 'plone.recipe.alltests.runner', 'main')],
             ws, options['executable'], options['bin-directory'],
@@ -76,6 +84,7 @@ class Recipe(object):
                 packages=packages,
                 testscript=self.testscript,
                 paths=paths,
+                groups=groups,
                 ),
             )
 

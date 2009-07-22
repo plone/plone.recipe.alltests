@@ -28,6 +28,9 @@ exclude
   A list of eggs which should be excluded from the test runs. The values are
   interpreted as Python regular expressions.
 
+groups
+  A buildout section containing a mapping of group names to package names.
+
 package-map
   An buildout section containing a mapping of distribution names to package
   names.
