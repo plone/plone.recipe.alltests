@@ -35,14 +35,12 @@ class Recipe(object):
 
         reqs, ws = self.egg.working_set(['plone.recipe.alltests'])
 
-        pmap = dict()
-        package_map = options.get('package-map', '').strip()
-        if package_map:
-            pmap = self.buildout[package_map]
-
         packages = []
+        paths = {}
         for dist in ws.by_key.values():
-            packages.append(dist.project_name)
+            name = dist.project_name
+            packages.append(name)
+            paths[name] = dist.location
 
         excludes = [re.compile(e) for e in self.exclude]
         packages = list(set(packages) - EXCLUDE_PACKAGES)
@@ -57,10 +55,18 @@ class Recipe(object):
                 filtered_packages.append(p)
         packages = filtered_packages
 
+        # Allow to map distribution names to different package names
+        pmap = dict()
+        package_map = options.get('package-map', '').strip()
+        if package_map:
+            pmap = self.buildout[package_map]
+
         for k, v in pmap.items():
             if k in packages:
                 packages.remove(k)
                 packages.append(v)
+                paths[v] = paths[k]
+                del paths[k]
         packages.sort()
 
         easy_install.scripts(
@@ -69,6 +75,7 @@ class Recipe(object):
             arguments=dict(
                 packages=packages,
                 testscript=self.testscript,
+                paths=paths,
                 ),
             )
 

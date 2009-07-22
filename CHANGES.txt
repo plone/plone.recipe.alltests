@@ -4,6 +4,9 @@ Changelog
 1.0 (unreleased)
 ----------------
 
+- Automatically extend the test path with the package location.
+  [hannosch]
+
 - Allow the use of regular expressions in the exclude list.
   [hannosch]
 
