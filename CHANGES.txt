@@ -4,6 +4,9 @@ Changelog
 1.0 (unreleased)
 ----------------
 
+- Added total test time to the output.
+  [hannosch]
+
 - Automatically extend the test path with the package location.
   [hannosch]
 
