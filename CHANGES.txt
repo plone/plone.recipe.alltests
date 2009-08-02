@@ -1,7 +1,7 @@
 Changelog
 =========
 
-1.0 (unreleased)
+1.0 - 2009-08-02
 ----------------
 
 - Added support for grouping multiple packages into one test group, avoiding

@@ -1,9 +1,6 @@
 import os
 from setuptools import setup, find_packages
 
-name = "plone.recipe.alltests"
-version = '1.0'
-
 def read(*rnames):
     return open(os.path.join(os.path.dirname(__file__), *rnames)).read()
 
@@ -14,8 +11,8 @@ long_description=(
     )
 
 setup(
-    name = name,
-    version = version,
+    name = 'plone.recipe.alltests',
+    version = '1.0',
     author = "Hanno Schlichting",
     author_email = "hanno@hannosch.eu",
     description = "Buildout recipe for running tests isolated at package boundaries",
@@ -41,5 +38,7 @@ setup(
         'zc.recipe.egg',
     ],
     zip_safe=False,
-    entry_points = {'zc.buildout': ['default = %s:Recipe' % name]},
+    entry_points = {
+        'zc.buildout': ['default = %s:Recipe' % 'plone.recipe.alltests']
+    },
     )
