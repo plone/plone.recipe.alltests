@@ -12,7 +12,7 @@ long_description=(
 
 setup(
     name = 'plone.recipe.alltests',
-    version = '1.0.1',
+    version = '1.1',
     author = "Hanno Schlichting",
     author_email = "hanno@hannosch.eu",
     description = "Buildout recipe for running tests isolated at package boundaries",
