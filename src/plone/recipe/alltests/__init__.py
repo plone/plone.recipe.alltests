@@ -19,7 +19,13 @@ class Recipe(object):
         self.buildout, self.options, self.name = buildout, options, name
         self.egg = Egg(buildout, options['recipe'], options)
 
-        self.testscript = self.options.get('test-script')
+        bin_test = os.path.join(buildout['buildout']['bin-directory'], 'test')
+        self.testscript = self.options.get('test-script', bin_test)
+
+        if 'eggs' not in self.options:
+            # Fallback to [test]'s eggs if available.
+            if 'test' in self.buildout:
+                self.options['eggs'] = self.buildout['test'].get('eggs')
 
         exclude = self.options.get('exclude', '')
         self.exclude = exclude.split()

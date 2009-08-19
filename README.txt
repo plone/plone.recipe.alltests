@@ -18,11 +18,13 @@ Options
 The options you can set in the recipes section in your `buildout.cfg`.
 
 eggs
-  A list of packages that should be tested.
+  A list of packages that should be tested.  Defaults to the eggs of the
+  [test] part, if available.
 
 test-script
   The file system location of a `zc.recipe.testrunner` test runner, which
   needs to be configured correctly to run all tests for all specified eggs.
+  Defaults to ``bin/test``.
 
 exclude
   A list of eggs which should be excluded from the test runs. The values are
@@ -35,10 +37,19 @@ package-map
   An buildout section containing a mapping of distribution names to package
   names.
 
+
 Scripts
 -------
 
 This recipe create one script named after the recipe section.
+
+All options are optional, so a minimal part looks like this::
+
+  [test-all]
+  recipe = plone.recipe.alltests
+
+This creates a ``bin/test-all`` script that runs bin/test for all eggs (and
+their dependencies) specified in the [test] part.
 
 
 Reporting bugs or asking questions
