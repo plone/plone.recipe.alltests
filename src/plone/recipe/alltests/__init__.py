@@ -6,6 +6,7 @@ from zc.recipe.egg import Egg
 
 
 EXCLUDE_PACKAGES = set((
+    'distribute',
     'setuptools',
     'plone.recipe.alltests',
     'zc.buildout',

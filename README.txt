@@ -18,8 +18,9 @@ Options
 The options you can set in the recipes section in your `buildout.cfg`.
 
 eggs
-  A list of packages that should be tested.  Defaults to the eggs of the
-  [test] part, if available.
+  A list of packages that should be tested. Defaults to the eggs of the
+  [test] part, if available. Tests of these packages and all their
+  dependencies will be run.
 
 test-script
   The file system location of a `zc.recipe.testrunner` test runner, which
