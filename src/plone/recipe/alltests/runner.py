@@ -25,6 +25,7 @@ def run_test(name, script, path, arg, package):
 def main(args):
     testscript = os.path.abspath(args.get('testscript'))
     packages = args.get('packages')
+    total_packages = len(packages)
     paths = args.get('paths')
     groups = args.get('groups')
     arg = ' '.join(sys.argv[1:])
@@ -52,11 +53,14 @@ def main(args):
         if value:
             errors.append(package)
 
-    print '\n#### Begin test results ####'
-    print "\nTotal time elapsed: %.3f seconds\n" % (time.time()-start)
-    for e in errors:
-        print 'Failing tests in %s' % e
-    print '#### End test results ####\n'
+    if len(errors):
+        print "Packages with test failures:\n"
+        for e in errors:
+            print 'Failing tests in %s' % e
+    print "\nTotal time elapsed: %.3f seconds" % (time.time()-start)
+    print "\nGrand total: %d packages, %d failures\n" % (
+        total_packages, len(errors)
+    )
 
     if len(errors) > 0:
         sys.exit(1)

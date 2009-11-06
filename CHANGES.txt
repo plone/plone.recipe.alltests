@@ -4,6 +4,9 @@ Changelog
 1.2 - unreleased
 ----------------
 
+- Refactor test summary somewhat to make it easier to parse.
+  [hannosch]
+
 - Exclude ``distribute`` by default from the test runs. Clarify that we always
   run tests for all dependencies of the packages listed in the eggs option.
   [hannosch]
