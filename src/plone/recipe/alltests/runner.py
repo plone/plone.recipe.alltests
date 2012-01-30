@@ -1,6 +1,11 @@
+import ConfigParser
 import os
+import re
 import sys
 import time
+import pkg_resources
+from plone.recipe.alltests import EXCLUDE_PACKAGES
+
 
 RUNNING_TESTS = '#### Running tests for %s ####'
 FINISHED_TESTS = '#### Finished tests for %s ####\n'
@@ -65,3 +70,38 @@ def main(args):
     if len(errors) > 0:
         sys.exit(1)
     sys.exit(0)
+
+
+if __name__ == '__main__':
+    cfg_file = sys.argv.pop(1)
+    cfg = ConfigParser.ConfigParser()
+    cfg.read(cfg_file)
+
+    args = {}
+    args['testscript'] = cfg.get('alltests', 'test-script',
+                                 os.path.join('bin', 'zope-testrunner'))
+
+    excludes = cfg.get('alltests', 'exclude', '').split()
+    excludes = [re.compile(e) for e in excludes]
+    args['packages'] = packages = []
+    args['paths'] = paths = {}
+    env = pkg_resources.Environment()
+    for project_name in env:
+        dists = env[project_name]
+        for dist in dists:
+            package_name = dist.project_name
+            if package_name in EXCLUDE_PACKAGES:
+                continue
+            if any(e.match(package_name) is not None for e in excludes):
+                continue
+            packages.append(package_name)
+            paths[package_name] = dist.location
+
+    # Allow to group multiple packages into one test run
+    args['groups'] = groups = dict()
+    groups_section = cfg.get('alltests', 'groups', '').strip()
+    if groups_section:
+        for k, v in cfg.items(groups_section):
+            groups[k] = v.split()
+
+    main(args)
