@@ -28,13 +28,24 @@ def main(args):
     total_packages = len(packages)
     paths = args.get('paths')
     groups = args.get('groups')
-    arg = ' '.join(sys.argv[1:])
+
+    argv = []
+    requested_group = None
+    for arg in sys.argv[1:]:
+        if arg.startswith('--group='):
+            requested_group = arg[8:]
+        else:
+            argv.append(arg)
+    arg = ' '.join(argv)
 
     errors = []
     start = time.time()
 
     # First run grouped tests
     for group in sorted(groups):
+        if requested_group and group != requested_group:
+            continue
+
         members = groups[group]
         for m in members:
             if m in packages:
@@ -48,6 +59,9 @@ def main(args):
 
     # Next run tests for the remaining individual packages
     for package in packages:
+        if requested_group and package != requested_group:
+            continue
+
         path = paths.get(package)
         value = run_test(package, testscript, path, arg, package)
         if value:
