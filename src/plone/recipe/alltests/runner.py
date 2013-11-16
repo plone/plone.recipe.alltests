@@ -31,9 +31,12 @@ def main(args):
 
     argv = []
     requested_group = None
+    exclude_single_packages = False
     for arg in sys.argv[1:]:
         if arg.startswith('--group='):
             requested_group = arg[8:]
+        elif arg.startswith('--exclude-single-packages'):
+            exclude_single_packages = True
         else:
             argv.append(arg)
     arg = ' '.join(argv)
@@ -58,14 +61,15 @@ def main(args):
             errors.append(name)
 
     # Next run tests for the remaining individual packages
-    for package in packages:
-        if requested_group and package != requested_group:
-            continue
+    if not exclude_single_packages:
+        for package in packages:
+            if requested_group and package != requested_group:
+                continue
 
-        path = paths.get(package)
-        value = run_test(package, testscript, path, arg, package)
-        if value:
-            errors.append(package)
+            path = paths.get(package)
+            value = run_test(package, testscript, path, arg, package)
+            if value:
+                errors.append(package)
 
     if len(errors):
         print "Packages with test failures:\n"
