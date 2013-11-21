@@ -1,0 +1,2 @@
+*.pyc
+/src/plone.recipe.alltests.egg-info/
