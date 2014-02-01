@@ -4,9 +4,11 @@ Changelog
 1.4 - unreleased
 ----------------
 
-- Make it possible to exclude single packages from the test run by specifying
-  the '--exclude-single-packages' option.
-  [timo]
+- Added ``exclude-groups`` and ``include-groups`` so entire package groups
+  can be easily included or excluded from the test run.
+
+- Added the ``default-policy`` setting which makes it possible to exclude
+  packages by default, unless explicitly listed in ``include``.
 
 
 1.3 - 2013-10-08

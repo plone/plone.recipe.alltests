@@ -18,21 +18,41 @@ Options
 The options you can set in the recipes section in your `buildout.cfg`.
 
 eggs
-  A list of packages that should be tested. Defaults to the eggs of the
-  [test] part, if available. Tests of these packages and all their
-  dependencies will be run.
+  A list of packages that should be installed in the test environment.
+  Defaults to the eggs of the [test] part, if available.
+  By default, tests of these packages and all their dependencies will be run,
+  unless you change the ``default-policy``.
 
 test-script
   The file system location of a `zc.recipe.testrunner` test runner, which
   needs to be configured correctly to run all tests for all specified eggs.
   Defaults to ``bin/test``.
 
-exclude
-  A list of eggs which should be excluded from the test runs. The values are
-  interpreted as Python regular expressions.
-
 groups
   A buildout section containing a mapping of group names to package names.
+
+default-policy
+  Determines whether packages should be included in the test run or excluded,
+  by default. Set to 'include' (the default) to include all packages in the
+  Python environment, or 'exclude' to skip all packages except those
+  explicity included with ``include`` or ``include-groups``.
+
+exclude
+  A list of packages which should be excluded from the test runs, if
+  ``default-policy`` is include. The values are interpreted as Python
+  regular expressions.
+
+exclude-groups
+  A list of groups which should be excluded from the test runs, if
+  ``default-policy`` is include.
+
+include
+  A list of packages which should be included in the test runs, if
+  ``default-policy`` is exclude.
+
+include-groups
+  A list of groups which should be included in the test runs, if
+  ``default-policy`` is exclude.
 
 package-map
   An buildout section containing a mapping of distribution names to package

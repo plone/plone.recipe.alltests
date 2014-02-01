@@ -28,8 +28,12 @@ class Recipe(object):
             if 'test' in self.buildout:
                 self.options['eggs'] = self.buildout['test'].get('eggs')
 
-        exclude = self.options.get('exclude', '')
-        self.exclude = exclude.split()
+        self.default_policy = self.options.get('default-policy', 'include').strip()
+
+        self.exclude = self.options.get('exclude', '').split()
+        self.exclude_groups = self.options.get('exclude-groups', '').split()
+        self.include = self.options.get('include', '').split()
+        self.include_groups = self.options.get('include-groups', '').split()
 
         options['location'] = os.path.join(
             buildout['buildout']['parts-directory'],
@@ -50,16 +54,25 @@ class Recipe(object):
             paths[name] = dist.location
 
         excludes = [re.compile(e) for e in self.exclude]
-        packages = list(set(packages) - EXCLUDE_PACKAGES)
+        includes = [re.compile(e) for e in self.include]
 
         filtered_packages = []
-        for p in packages:
+        for p in list(set(packages) - EXCLUDE_PACKAGES):
             match = False
-            for e in excludes:
-                if e.search(p) is not None:
-                    match = True
-            if not match:
-                filtered_packages.append(p)
+            if self.default_policy == 'include':
+                for e in excludes:
+                    if e.search(p) is not None:
+                        match = True
+                        break
+                if not match:
+                    filtered_packages.append(p)
+            elif self.default_policy == 'exclude':
+                for i in includes:
+                    if i.search(p) is not None:
+                        match = True
+                        break
+                if match:
+                    filtered_packages.append(p)
         packages = filtered_packages
 
         # Allow to map distribution names to different package names
@@ -82,7 +95,10 @@ class Recipe(object):
         if groups_section:
             data = self.buildout[groups_section]
             for k, v in data.items():
-                groups[k] = v.split()
+                if self.default_policy == 'include' and k not in self.exclude_groups:
+                    groups[k] = v.split()
+                elif self.default_policy == 'exclude' and k in self.include_groups:
+                    groups[k] = v.split()
 
         easy_install.scripts(
             [(self.name, 'plone.recipe.alltests.runner', 'main')],
