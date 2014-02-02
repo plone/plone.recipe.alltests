@@ -95,8 +95,13 @@ class Recipe(object):
         if groups_section:
             data = self.buildout[groups_section]
             for k, v in data.items():
-                if self.default_policy == 'include' and k not in self.exclude_groups:
-                    groups[k] = v.split()
+                if self.default_policy == 'include':
+                    if k in self.exclude_groups:
+                        for p in v.split():
+                            if p in packages:
+                                packages.remove(p)
+                    else:
+                        groups[k] = v.split()
                 elif self.default_policy == 'exclude' and k in self.include_groups:
                     groups[k] = v.split()
 

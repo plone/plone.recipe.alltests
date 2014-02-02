@@ -10,6 +10,7 @@ TEST_COMMAND = '%(script)s --exit-with-status --test-path %(path)s %(arg)s -s %(
 def run_test(name, script, path, arg, package):
     error = False
     print RUNNING_TESTS % name
+    sys.stdout.flush()
     value = os.system(TEST_COMMAND % dict(
         script=script,
         path=path,
@@ -19,6 +20,7 @@ def run_test(name, script, path, arg, package):
     if value > 0:
         error = True
     print FINISHED_TESTS % name
+    sys.stdout.flush()
     return error
 
 

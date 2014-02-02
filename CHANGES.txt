@@ -4,6 +4,8 @@ Changelog
 1.4 - unreleased
 ----------------
 
+- Flush stdout after printing status before and after running tests.
+
 - Added ``exclude-groups`` and ``include-groups`` so entire package groups
   can be easily included or excluded from the test run.
 
