@@ -13,9 +13,9 @@ setup(
     author_email = "hanno@hannosch.eu",
     description = "Buildout recipe for running tests isolated at package boundaries",
     long_description=(
-        read('README.txt')
+        read('README.rst')
         + '\n' +
-        read('CHANGES.txt')
+        read('CHANGES.rst')
     ),
     license = "ZPL 2.1",
     keywords = "zope2 buildout",
