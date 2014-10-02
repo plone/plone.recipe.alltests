@@ -1,14 +1,53 @@
+# -*- coding: utf-8 -*-
+import argparse
 import os
+import pkg_resources
 import sys
+import threading
 import time
+
+try:
+    import queue
+except ImportError:
+    import Queue as queue
+
+parser = argparse.ArgumentParser(
+    description='testrunner running all tests in a buildout environment'
+                ' grouped at once',
+    version=pkg_resources.get_distribution("plone.recipe.alltests").version,
+)
+parser.add_argument(
+    "-t", "--threads",
+    dest="threads",
+    type=int,
+    default=1,
+    help="Number of parallel threads to run tests in.",
+)
+
+parser.add_argument(
+    "-g", "--groups",
+    dest="groups",
+    nargs='*',
+    default=[],
+    help="Only test given groups",
+)
+parser.add_argument(
+    "testparameters",
+    default=[],
+    help="Optional parameters passed to the testrunner (in quotes)",
+)
 
 RUNNING_TESTS = '#### Running tests for %s ####'
 FINISHED_TESTS = '#### Finished tests for %s ####\n'
-TEST_COMMAND = '%(script)s --exit-with-status --test-path %(path)s %(arg)s -s %(package)s'
+TEST_COMMAND = '%(script)s --exit-with-status --test-path %(path)s %(arg)s' +\
+               ' -s %(package)s'
 
 
 def run_test(name, script, path, arg, package):
-    error = False
+    """runs a single test
+
+    needs to be thread safe
+    """
     print RUNNING_TESTS % name
     sys.stdout.flush()
     value = os.system(TEST_COMMAND % dict(
@@ -17,35 +56,52 @@ def run_test(name, script, path, arg, package):
         arg=arg,
         package=package,
     ))
-    if value > 0:
-        error = True
     print FINISHED_TESTS % name
     sys.stdout.flush()
-    return error
+    return value == 0
 
 
-def main(args):
-    testscript = os.path.abspath(args.get('testscript'))
-    packages = args.get('packages')
+def worker(idx, todos, errors):
+    """thread queue worker
+
+    needs to be thread safe
+    ``idx``
+        is the threads counter value on start
+    ``todos``
+        queue with tuples of name and arguments to be passed to run_test
+    ``errors``
+        is a list of group names withnfailed tests to be filled.
+
+    returns always ``None`` (state is communicated via ``errors'``)
+    """
+    while True:
+        try:
+            args = todos.get_nowait()
+        except queue.Empty:
+            return
+        ok = run_test(*args)
+        if not ok:
+            errors.append(args[0])
+
+
+def main(config):
+    #argv = sys.argv[1:]
+    arguments = parser.parse_args()
+    testscript = os.path.abspath(config.get('testscript'))
+    packages = config.get('packages')
     total_packages = len(packages)
-    paths = args.get('paths')
-    groups = args.get('groups')
-
-    argv = []
-    requested_group = None
-    for arg in sys.argv[1:]:
-        if arg.startswith('--group='):
-            requested_group = arg[8:]
-        else:
-            argv.append(arg)
-    arg = ' '.join(argv)
+    paths = config.get('paths')
+    groups = config.get('groups')
 
     errors = []
     start = time.time()
 
+    todos = queue.Queue()
+
     # First run grouped tests
     for group in sorted(groups):
-        if requested_group and group != requested_group:
+        if arguments.groups\
+           and group not in arguments.groups:
             continue
 
         members = groups[group]
@@ -58,19 +114,30 @@ def main(args):
             if paths.get(p) is not None
         ])
         name = 'group %s' % group
-        value = run_test(name, testscript, path, arg, package)
-        if value:
-            errors.append(name)
+        todos.put_nowait(
+            (name, testscript, path, arguments.testparameters, package)
+        )
 
     # Next run tests for the remaining individual packages
     for package in packages:
-        if requested_group and package != requested_group:
+        if arguments.groups\
+           and package not in arguments.groups:
             continue
 
         path = paths.get(package)
-        value = run_test(package, testscript, path, arg, package)
-        if value:
-            errors.append(package)
+        todos.put_nowait(
+            (package, testscript, path, arguments.testparameters, package)
+        )
+
+    # start the threads with the queue workers
+    threads = []
+    for idx in range(arguments.threads):
+        thread = threading.Thread(target=worker, args=(idx, todos, errors))
+        thread.start()
+        threads.append(thread)
+
+    for thread in threads:
+        thread.join()
 
     if len(errors):
         print "Packages with test failures:\n"

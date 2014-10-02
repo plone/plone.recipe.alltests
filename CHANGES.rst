@@ -1,8 +1,14 @@
 Changelog
 =========
 
-1.5 (unreleased)
+2.0 (unreleased)
 ----------------
+
+- Use ``argparse`` for better commandline help
+  [jensens]
+
+- Run tests in parallel using threading.
+  [jensens]
 
 - Do not fail if path for a package can not be found.
   [timo]
