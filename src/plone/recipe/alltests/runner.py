@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+from __future__ import print_function
 import argparse
 import os
 import pkg_resources
@@ -33,15 +34,15 @@ parser.add_argument(
 )
 parser.add_argument(
     "testparameters",
-    nargs="*",
+    nargs="?",
     default='',
     help="Optional parameters passed to the testrunner (in quotes)",
 )
 
-RUNNING_TESTS = '#### Running tests for %s ####'
-FINISHED_TESTS = '#### Finished tests for %s ####\n'
-TEST_COMMAND = '%(script)s --exit-with-status --test-path %(path)s %(arg)s' +\
-               ' -s %(package)s'
+RUNNING_TESTS = '#### Running tests for {0} ####'
+FINISHED_TESTS = '#### Finished tests for {0} ####\n'
+TEST_COMMAND = '{script} --exit-with-status --test-path {path} {arg}' +\
+               ' -s {package}'
 
 
 def run_test(name, script, path, arg, package):
@@ -49,15 +50,18 @@ def run_test(name, script, path, arg, package):
 
     needs to be thread safe
     """
-    print RUNNING_TESTS % name
+    print(RUNNING_TESTS.format(name))
     sys.stdout.flush()
-    value = os.system(TEST_COMMAND % dict(
-        script=script,
-        path=path,
-        arg=arg,
-        package=package,
-    ))
-    print FINISHED_TESTS % name
+    # todo: here it would be better to use subprocess
+    value = os.system(
+        TEST_COMMAND.format(
+            script=script,
+            path=path,
+            arg=arg,
+            package=package
+        )
+    )
+    print(FINISHED_TESTS.format(name))
     sys.stdout.flush()
     return value == 0
 
@@ -130,12 +134,16 @@ def main(config):
             (package, testscript, path, arguments.testparameters, package)
         )
 
+    if not todos.qsize():
+        print('With given configuration there are no matching tests to run.')
+        sys.exit(78)  # configuration error (see sysexits.h)
+
     # start the threads with the queue workers
     if arguments.threads > 1:
         # use threading
-        print "Start testrunner Using {0} parallel threads".format(
+        print("Start testrunner Using {0} parallel threads".format(
             arguments.threads
-        )
+        ))
         threads = []
         for idx in range(arguments.threads):
             thread = threading.Thread(
@@ -149,18 +157,20 @@ def main(config):
             thread.join()
     else:
         # do not use threading
-        print "Start testrunner in serial processing mode."
+        print("Start testrunner in serial processing mode.")
         worker(None, todos, errors)
 
     if len(errors):
-        print "Packages with test failures:\n"
-        for e in errors:
-            print 'Failing tests in %s' % e
-    print "\nTotal time elapsed: %.3f seconds" % (time.time() - start)
-    print "\nGrand total: %d packages, %d failures\n" % (
-        total_packages, len(errors)
+        print('Packages with test failures:\n')
+        for error in errors:
+            print('Failing tests in {0}'.format(error))
+    print("\nTotal time elapsed: {0:.3f} seconds".format((time.time()-start)))
+    print(
+        "\nGrand total: {0:d} packages, {1:d} failures\n".format(
+            total_packages,
+            len(errors)
+        )
     )
-
     if len(errors) > 0:
         sys.exit(1)
     sys.exit(0)
