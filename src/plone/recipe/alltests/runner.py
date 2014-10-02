@@ -33,7 +33,8 @@ parser.add_argument(
 )
 parser.add_argument(
     "testparameters",
-    default=[],
+    nargs="*",
+    default='',
     help="Optional parameters passed to the testrunner (in quotes)",
 )
 
@@ -130,14 +131,26 @@ def main(config):
         )
 
     # start the threads with the queue workers
-    threads = []
-    for idx in range(arguments.threads):
-        thread = threading.Thread(target=worker, args=(idx, todos, errors))
-        thread.start()
-        threads.append(thread)
+    if arguments.threads > 1:
+        # use threading
+        print "Start testrunner Using {0} parallel threads".format(
+            arguments.threads
+        )
+        threads = []
+        for idx in range(arguments.threads):
+            thread = threading.Thread(
+                target=worker,
+                args=(idx, todos, errors)
+            )
+            thread.start()
+            threads.append(thread)
 
-    for thread in threads:
-        thread.join()
+        for thread in threads:
+            thread.join()
+    else:
+        # do not use threading
+        print "Start testrunner in serial processing mode."
+        worker(None, todos, errors)
 
     if len(errors):
         print "Packages with test failures:\n"
