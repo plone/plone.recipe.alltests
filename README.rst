@@ -72,9 +72,15 @@ All options are optional, so a minimal part looks like this::
 This creates a ``bin/test-all`` script that runs bin/test for all eggs (and
 their dependencies) specified in the [test] part.
 
+Run ``bin/test-all --help`` in order to see the possible options.
 
-Reporting bugs or asking questions
-----------------------------------
 
-Please report issues and questions at:
-https://github.com/plone/plone.recipe.alltests/issues
+Issues, Contributions, Source Code
+==================================
+
+Contributors please read the document `Process for Plone core's development <http://docs.plone.org/develop/plone-coredev/index.html>`_
+
+Sources are at the `Plone code repository hosted at Github <https://github.com/plone/plone.recipe.alltests>`_.
+
+File bugs, ideas or other feedback at the `Issue tracker <https://github.com/plone/plone.recipe.alltests/issues>`_.
+
