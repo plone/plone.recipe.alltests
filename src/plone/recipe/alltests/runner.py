@@ -3,6 +3,7 @@ from __future__ import print_function
 import argparse
 import os
 import pkg_resources
+import re
 import sys
 import threading
 import time
@@ -30,13 +31,22 @@ parser.add_argument(
     dest="groups",
     nargs='*',
     default=[],
-    help="Only test given groups",
+    help="Filter by given groups. Whole string matches.",
 )
 parser.add_argument(
-    "testparameters",
+    "-f", "--filter",
+    dest="filter",
     nargs="?",
     default='',
-    help="Optional parameters passed to the testrunner (in quotes)",
+    help='Filter package names by regular expression',
+)
+parser.add_argument(
+    "-p", "--passthrough",
+    dest="passthrough",
+    nargs="?",
+    default='',
+    help='Optional parameters passed through to the testrunner (in quotes)'
+         ' I.e. "--all"',
 )
 
 RUNNING_TESTS = '#### Running tests for {0} ####'
@@ -89,6 +99,12 @@ def worker(idx, todos, errors):
             errors.append(args[0])
 
 
+def _match(filter_re, pkg):
+    if not filter_re:
+        return True
+    return bool(filter_re.search(pkg))
+
+
 def main(config):
     #argv = sys.argv[1:]
     arguments = parser.parse_args()
@@ -103,35 +119,46 @@ def main(config):
 
     todos = queue.Queue()
 
-    # First run grouped tests
+    filter_re = None
+    if arguments.filter:
+        filter_re = re.compile(arguments.filter)
+
+    # First collect grouped tests
     for group in sorted(groups):
         if arguments.groups\
            and group not in arguments.groups:
             continue
 
-        members = groups[group]
-        for m in members:
-            if m in packages:
-                packages.remove(m)
+        for pkg in groups[group]:
+            if pkg in packages:
+                # when used, remove from packages
+                packages.remove(pkg)
+
+        members = [_ for _ in groups[group] if _match(filter_re, pkg)]
+        if not members:
+            continue
         package = ' -s '.join(members)
         path = ' --test-path '.join([
             paths.get(p) for p in members
             if paths.get(p) is not None
         ])
-        name = 'group %s' % group
+        name = 'group "{0}"'.format(group)
         todos.put_nowait(
-            (name, testscript, path, arguments.testparameters, package)
+            (name, testscript, path, arguments.passthrough, package)
         )
 
-    # Next run tests for the remaining individual packages
+    # Next collect tests for the remaining individual packages
     for package in packages:
         if arguments.groups\
            and package not in arguments.groups:
             continue
+        if not _match(filter_re, package):
+            continue
 
         path = paths.get(package)
+        name = 'single package "{0}"'.format(package)
         todos.put_nowait(
-            (package, testscript, path, arguments.testparameters, package)
+            (name, testscript, path, arguments.passthrough, package)
         )
 
     if not todos.qsize():

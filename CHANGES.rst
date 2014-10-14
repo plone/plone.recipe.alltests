@@ -4,6 +4,9 @@ Changelog
 2.0 (unreleased)
 ----------------
 
+- add regular expression filter argument for packages
+  [jensens]
+
 - Use ``argparse`` for better commandline help
   [jensens]
 
