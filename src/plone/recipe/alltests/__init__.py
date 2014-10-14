@@ -1,8 +1,8 @@
-import os
-import re
-
+# -*- coding: utf-8 -*-
 from zc.buildout import easy_install
 from zc.recipe.egg import Egg
+import os
+import re
 
 
 EXCLUDE_PACKAGES = set((
@@ -28,7 +28,10 @@ class Recipe(object):
             if 'test' in self.buildout:
                 self.options['eggs'] = self.buildout['test'].get('eggs')
 
-        self.default_policy = self.options.get('default-policy', 'include').strip()
+        self.default_policy = self.options.get(
+            'default-policy',
+            'include'
+        ).strip()
 
         self.exclude = self.options.get('exclude', '').split()
         self.exclude_groups = self.options.get('exclude-groups', '').split()
@@ -102,7 +105,8 @@ class Recipe(object):
                                 packages.remove(p)
                     else:
                         groups[k] = v.split()
-                elif self.default_policy == 'exclude' and k in self.include_groups:
+                elif (self.default_policy == 'exclude'
+                      and k in self.include_groups):
                     groups[k] = v.split()
 
         easy_install.scripts(
