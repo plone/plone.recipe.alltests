@@ -1,17 +1,18 @@
 import os
 from setuptools import setup, find_packages
 
+
 def read(*rnames):
     return open(os.path.join(os.path.dirname(__file__), *rnames)).read()
 
 version = '1.5.dev0'
 
 setup(
-    name = 'plone.recipe.alltests',
-    version = version,
-    author = "Hanno Schlichting",
-    author_email = "hanno@hannosch.eu",
-    description = "Buildout recipe for running tests isolated at package boundaries",
+    name='plone.recipe.alltests',
+    version=version,
+    author="Hanno Schlichting",
+    author_email="hanno@hannosch.eu",
+    description="Buildout recipe for running tests isolated at package boundaries",
     long_description=(
         read('README.rst')
         + '\n' +
@@ -21,16 +22,16 @@ setup(
     keywords = "zope2 buildout",
     url='http://pypi.python.org/pypi/plone.recipe.alltests',
     classifiers=[
-      "License :: OSI Approved :: Zope Public License",
-      "Framework :: Buildout",
-      "Framework :: Plone",
-      "Framework :: Zope2",
-      "Programming Language :: Python",
-      ],
+        "License :: OSI Approved :: Zope Public License",
+        "Framework :: Buildout",
+        "Framework :: Plone",
+        "Framework :: Zope2",
+        "Programming Language :: Python",
+    ],
     tests_require=['zope.testing'],
     packages = find_packages('src'),
     include_package_data = True,
-    package_dir = {'':'src'},
+    package_dir={'': 'src'},
     namespace_packages = ['plone', 'plone.recipe'],
     install_requires = [
         'zc.buildout',
@@ -41,4 +42,4 @@ setup(
     entry_points = {
         'zc.buildout': ['default = %s:Recipe' % 'plone.recipe.alltests']
     },
-    )
+)
