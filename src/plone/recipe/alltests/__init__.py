@@ -113,8 +113,8 @@ class Recipe(object):
                 testscript=self.testscript,
                 paths=paths,
                 groups=groups,
-                ),
-            )
+            ),
+        )
 
         return location
 

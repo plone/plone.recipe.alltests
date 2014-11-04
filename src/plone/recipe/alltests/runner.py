@@ -73,7 +73,7 @@ def main(args):
         print "Packages with test failures:\n"
         for e in errors:
             print 'Failing tests in %s' % e
-    print "\nTotal time elapsed: %.3f seconds" % (time.time()-start)
+    print "\nTotal time elapsed: %.3f seconds" % (time.time() - start)
     print "\nGrand total: %d packages, %d failures\n" % (
         total_packages, len(errors)
     )
