@@ -76,5 +76,5 @@ their dependencies) specified in the [test] part.
 Reporting bugs or asking questions
 ----------------------------------
 
-We have a shared bugtracker and help desk on Launchpad:
-https://bugs.launchpad.net/collective.buildout/
+Please report issues and questions at:
+https://github.com/plone/plone.recipe.alltests/issues
