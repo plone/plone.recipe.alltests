@@ -4,7 +4,8 @@ Changelog
 1.5 (unreleased)
 ----------------
 
-- Nothing changed yet.
+- Do not fail if path for a package can not be found.
+  [timo]
 
 
 1.4 (2014-03-02)
