@@ -53,7 +53,10 @@ def main(args):
             if m in packages:
                 packages.remove(m)
         package = ' -s '.join(members)
-        path = ' --test-path '.join([paths.get(p) for p in members])
+        path = ' --test-path '.join([
+            paths.get(p) for p in members
+            if paths.get(p) is not None
+        ])
         name = 'group %s' % group
         value = run_test(name, testscript, path, arg, package)
         if value:
