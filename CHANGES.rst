@@ -1,7 +1,7 @@
 Changelog
 =========
 
-1.5 (unreleased)
+1.5 (2015-03-21)
 ----------------
 
 - Do not fail if path for a package can not be found.
