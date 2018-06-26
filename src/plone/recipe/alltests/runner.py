@@ -9,7 +9,7 @@ TEST_COMMAND = '%(script)s --exit-with-status --test-path %(path)s %(arg)s -s %(
 
 def run_test(name, script, path, arg, package):
     error = False
-    print RUNNING_TESTS % name
+    print(RUNNING_TESTS % name)
     sys.stdout.flush()
     value = os.system(TEST_COMMAND % dict(
         script=script,
@@ -19,7 +19,7 @@ def run_test(name, script, path, arg, package):
     ))
     if value > 0:
         error = True
-    print FINISHED_TESTS % name
+    print(FINISHED_TESTS % name)
     sys.stdout.flush()
     return error
 
@@ -73,13 +73,13 @@ def main(args):
             errors.append(package)
 
     if len(errors):
-        print "Packages with test failures:\n"
+        print("Packages with test failures:\n")
         for e in errors:
-            print 'Failing tests in %s' % e
-    print "\nTotal time elapsed: %.3f seconds" % (time.time() - start)
-    print "\nGrand total: %d packages, %d failures\n" % (
+            print('Failing tests in %s' % e)
+    print("\nTotal time elapsed: %.3f seconds" % (time.time() - start))
+    print("\nGrand total: %d packages, %d failures\n" % (
         total_packages, len(errors)
-    )
+    ))
 
     if len(errors) > 0:
         sys.exit(1)

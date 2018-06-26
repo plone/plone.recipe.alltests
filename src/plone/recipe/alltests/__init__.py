@@ -1,9 +1,6 @@
 import os
 import re
 
-from zc.buildout import easy_install
-from zc.recipe.egg import Egg
-
 
 EXCLUDE_PACKAGES = set((
     'distribute',
@@ -17,6 +14,8 @@ EXCLUDE_PACKAGES = set((
 class Recipe(object):
 
     def __init__(self, buildout, name, options):
+        from zc.recipe.egg import Egg
+
         self.buildout, self.options, self.name = buildout, options, name
         self.egg = Egg(buildout, options['recipe'], options)
 
@@ -41,6 +40,8 @@ class Recipe(object):
         )
 
     def install(self):
+        from zc.buildout import easy_install
+
         options = self.options
         location = options['location']
 
