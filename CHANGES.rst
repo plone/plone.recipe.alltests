@@ -10,7 +10,8 @@ New:
 
 Fixes:
 
-- *add item here*
+- Fix imports when buildout was installed using pip.
+  [davisagli]
 
 
 1.5 (2015-03-21)
