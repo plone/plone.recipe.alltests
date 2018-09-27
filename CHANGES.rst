@@ -4,10 +4,6 @@ Changelog
 1.6 (unreleased)
 ----------------
 
-New:
-
-- *add item here*
-
 Fixes:
 
 - Fix imports when buildout was installed using pip.
