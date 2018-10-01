@@ -21,7 +21,7 @@ setup(
     ),
     license="ZPL 2.1",
     keywords="zope2 buildout",
-    url='https://pypi.python.org/pypi/plone.recipe.alltests',
+    url='https://pypi.org/project/plone.recipe.alltests',
     classifiers=[
         "License :: OSI Approved :: Zope Public License",
         "Framework :: Buildout",
