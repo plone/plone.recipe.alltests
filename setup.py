@@ -23,6 +23,7 @@ setup(
     keywords="zope2 buildout",
     url='https://pypi.org/project/plone.recipe.alltests',
     classifiers=[
+        "Development Status :: 5 - Production/Stable",
         "License :: OSI Approved :: Zope Public License",
         "Framework :: Buildout",
         "Framework :: Plone",
